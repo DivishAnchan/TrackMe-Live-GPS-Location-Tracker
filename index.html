@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realtime Location Tracker</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<script>
+    // Create map
+    var map = L.map('map').setView([20.5937, 78.9629], 5);
+
+    // OpenStreetMap layer
+    L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+            attribution: '&copy; OpenStreetMap contributors'
+        }
+    ).addTo(map);
+
+    var marker;
+    var circle;
+
+    // Function to show location
+    function getPosition(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        var accuracy = position.coords.accuracy;
+
+        // Remove old marker and circle
+        if (marker) {
+            map.removeLayer(marker);
+        }
+
+        if (circle) {
+            map.removeLayer(circle);
+        }
+
+        // Add new marker and circle
+        marker = L.marker([lat, lng]).addTo(map);
+        circle = L.circle([lat, lng], {
+            radius: accuracy
+        }).addTo(map);
+
+        // Zoom to current location
+        map.setView([lat, lng], 16);
+
+        console.log(
+            "Latitude: " + lat +
+            " Longitude: " + lng +
+            " Accuracy: " + accuracy + " meters"
+        );
+    }
+
+    // Error handling
+    function showError(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                alert("Location permission denied. Please allow location access.");
+                break;
+
+            case error.POSITION_UNAVAILABLE:
+                alert("Location information is unavailable.");
+                break;
+
+            case error.TIMEOUT:
+                alert("Location request timed out.");
+                break;
+
+            default:
+                alert("An unknown error occurred.");
+        }
+    }
+
+    // Get live location
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(
+            getPosition,
+            showError,
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+</script>
+
+</body>
+</html>
