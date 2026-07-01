@@ -95,11 +95,3 @@ http://127.0.0.1:5500/index.html
 * Emergency Services
 * Navigation Applications
 * Location-Based Services
-
-## License
-
-This project is open source and available under the MIT License.
-
-## Author
-
-Developed by **Divish Anchan**.
